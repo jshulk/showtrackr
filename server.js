@@ -8,6 +8,7 @@ var bcrypt = require('bcrypt');
 var async = require('async');
 var request = require('request');
 var _ = require('lodash');
+var xml2js = require('xml2js');
 
 
 var showSchema = new mongoose.Schema({
@@ -127,12 +128,15 @@ app.post("/api/shows", function(req, res, next){
             request.get("http://thetvdb.com/api/GetSeries.php?seriesname=" + seriesName, function(error, response, body){
                 if( error ) return next(error);
                 
+
+                console.log(response);
+
                 parser.parseString(body, function(err, result){
                    	if( !result.data.series ) {
                         return res.send(404, { message: req.body.showName + ' was not found'});
                     } 
                     
-                    var seriesId = result.data.series.seriesId || result.data.series[0].seriesId;
+                    var seriesId = result.data.series.seriesid || result.data.series[0].seriesid;
                     callback(err, seriesId);
                 });
             });
@@ -205,6 +209,8 @@ app.post("/api/shows", function(req, res, next){
         
     });
 });
+
+
 
 // error middleware
 app.use(function(err, req, res, next){
