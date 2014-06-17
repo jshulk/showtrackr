@@ -13,6 +13,10 @@ var xml2js = require('xml2js');
 var session = require('express-session');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var agenda = require('agenda')({ db : {address: 'localhost:27017/test' }});
+var sugar = require('sugar');
+var nodemailer = require('nodemailer');
+
 
 
 var showSchema = new mongoose.Schema({
@@ -261,6 +265,28 @@ app.post('/api/shows', function(req, res, next) {
 });
 
 
+app.post('/api/subscribe', ensureAuthenticated, function(req, res, next){
+   	Show.findById(req.body.showId, function(err, show){
+       	if( err ) return next(err);
+        show.subscribers.push(req.user.id);
+        show.save(function(err){
+           	if(err) return next(err);
+            res.send(200);
+        });
+    }); 
+});
+
+app.post('/api/unsubscribe', ensureAuthenticated, function(req, res, next){
+   Show.findById(req.body.showId, function(err, show){
+      	if(err) return next(err);
+       var index = show.subscribers.indexOf(req.user.id);
+       show.subscribers.splice(index, 1);
+       show.save(function(err){
+          	if(err) return next(err);
+           res.send(200);
+       });
+   }); 
+});
 
 // error middleware
 app.use(function(err, req, res, next){
