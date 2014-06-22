@@ -319,7 +319,7 @@ agenda.define('send email alert', function(job, done){
         });
         
         var mailOptions = {
-            from : 'Fred foo <foo@blurdybloop.com',
+            from : 'Vijay Tyagi <vijaytyagi.vt@gmail.com>',
             to : emails.join(','),
             subject: show.name + ' is starting soon',
             text: show.name + ' starts in less than 2 hours on '+ show.network+'.\n\n'+
